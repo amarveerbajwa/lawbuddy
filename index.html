@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LawBuddy - AI-Powered Legal Assistant Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #0f3460;
+            --highlight: #e94560;
+            --text: #f5f5f5;
+            --text-secondary: #a8a8a8;
+            --success: #00d4ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb1 {
+            width: 400px;
+            height: 400px;
+            background: var(--highlight);
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .orb2 {
+            width: 300px;
+            height: 300px;
+            background: var(--success);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 5s;
+        }
+
+        .orb3 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -100px) scale(1.1); }
+            50% { transform: translate(-100px, 100px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 1rem 5%;
+            background: rgba(26, 26, 46, 0.9);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--success), var(--highlight));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--success);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, var(--highlight), var(--success));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.3);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--text), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .agent-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--success) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .agent-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--success);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+        }
+
+        .agent-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .agent-card.locked:hover {
+            transform: none;
+            border-color: var(--glass-border);
+            box-shadow: none;
+        }
+
+        .agent-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--highlight), var(--success));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .agent-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            height: 600px;
+            background: var(--secondary);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        .chat-interface.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .chat-header {
+            background: var(--accent);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: messageFadeIn 0.3s ease;
+        }
+
+        @keyframes messageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: var(--highlight);
+            align-self: flex-end;
+        }
+
+        .message.agent {
+            background: var(--glass);
+            align-self: flex-start;
+        }
+
+        .chat-input {
+            padding: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 0.8rem 1.5rem;
+            color: var(--text);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .send-button {
+            background: var(--highlight);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            background: var(--success);
+            transform: scale(1.1);
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 100px 0;
+            display: none;
+        }
+
+        .pricing.active {
+            display: block;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card.premium {
+            border-color: var(--success);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.premium::before {
+            content: 'RECOMMENDED';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+        }
+
+        .pricing-card.premium:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1.5rem 0;
+            background: linear-gradient(135deg, var(--text), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .features li {
+            padding: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--secondary);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 400px;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--success);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--text);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .chat-interface {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+            
+            .pricing-card.premium {
+                transform: none;
+            }
+        }
+
+        /* Loading Animation */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 1rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Pulse Animation */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(0, 212, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 212, 255, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-orb orb1"></div>
+        <div class="floating-orb orb2"></div>
+        <div class="floating-orb orb3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="showSection('hero')">LawBuddy</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link" onclick="showSection('hero')">Home</a>
+                <a href="#" class="nav-link" onclick="showSection('pricing')">Pricing</a>
+                <a href="#" class="nav-link" id="dashboardLink" style="display: none;" onclick="showSection('dashboard')">Dashboard</a>
+                <button class="cta-button" id="authButton" onclick="toggleAuth()">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero active" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>AI-Powered Legal Intelligence</h1>
+                <p>Expert assistance in real estate, tax law, and finance for Canadian legal professionals</p>
+                <button class="cta-button pulse" onclick="showSection('pricing')">View Plans</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Your AI Agents</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Select an agent to start your consultation</p>
+            
+            <div class="agent-grid">
+                <div class="agent-card" onclick="openChat('real-estate')">
+                    <div class="agent-icon">🏠</div>
+                    <h3>Real Estate Expert</h3>
+                    <p>Comprehensive knowledge of Canadian real estate law, property transactions, zoning regulations, and market analysis.</p>
+                </div>
+                
+                <div class="agent-card" onclick="openChat('tax')">
+                    <div class="agent-icon">📊</div>
+                    <h3>Tax Law Specialist</h3>
+                    <p>Expert guidance on Canadian tax legislation, CRA regulations, corporate tax planning, and personal tax strategies.</p>
+                </div>
+                
+                <div class="agent-card" onclick="openChat('finance')">
+                    <div class="agent-icon">💹</div>
+                    <h3>Finance Advisor</h3>
+                    <p>Deep insights into financial markets, investment strategies, portfolio management, and economic analysis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; text-align: center; margin-bottom: 1rem;">Choose Your Plan</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 3rem;">Flexible pricing for every practice</p>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Basic</h3>
+                    <div class="price">$99<span>/month</span></div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Perfect for specialized practices</p>
+                    <ul class="features">
+                        <li>Access to 1 AI agent</li>
+                        <li>Unlimited consultations</li>
+                        <li>24/7 availability</li>
+                        <li>Email support</li>
+                    </ul>
+                    <button class="cta-button" style="width: 100%;" onclick="selectPlan('basic')">Choose Basic</button>
+                </div>
+                
+                <div class="pricing-card premium">
+                    <h3>Premium</h3>
+                    <div class="price">$249<span>/month</span></div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Full access for comprehensive support</p>
+                    <ul class="features">
+                        <li>Access to all 3 AI agents</li>
+                        <li>Unlimited consultations</li>
+                        <li>24/7 availability</li>
+                        <li>Priority support</li>
+                        <li>Custom agent training</li>
+                        <li>API access</li>
+                    </ul>
+                    <button class="cta-button" style="width: 100%;" onclick="selectPlan('premium')">Choose Premium</button>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 3rem; color: var(--text-secondary);">
+                Annual plans available with 20% discount
+            </p>
+        </div>
+    </section>
+
+    <!-- Chat Interface -->
+    <div class="chat-interface" id="chatInterface">
+        <div class="chat-header">
+            <div>
+                <h3 id="agentName">AI Agent</h3>
+                <p style="font-size: 0.9rem; opacity: 0.8;">Online</p>
+            </div>
+            <button class="close-modal" onclick="closeChat()">×</button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message agent">
+                <p>Hello! I'm here to help with your legal questions. How can I assist you today?</p>
+            </div>
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+            <button class="send-button" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <!-- Login/Signup Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <h2 id="modalTitle">Welcome Back</h2>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button class="cta-button" style="width: 100%; margin-top: 1rem;" type="submit">Continue</button>
+            </form>
+            <p style="text-align: center; margin-top: 1.5rem; color: var(--text-secondary);">
+                <span id="authToggleText">Don't have an account?</span>
+                <a href="#" style="color: var(--success); text-decoration: none;" onclick="toggleAuthMode()">
+                    <span id="authToggleLink">Sign up</span>
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentUser = null;
+        let currentPlan = null;
+        let currentAgent = null;
+        let isLoginMode = true;
+
+        // Navigation scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Section management
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update navigation
+            if (sectionId === 'dashboard' && !currentUser) {
+                showSection('hero');
+                toggleAuth();
+            }
+        }
+
+        // Authentication
+        function toggleAuth() {
+            const modal = document.getElementById('authModal');
+            modal.classList.toggle('active');
+        }
+
+        function closeModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            const modalTitle = document.getElementById('modalTitle');
+            const toggleText = document.getElementById('authToggleText');
+            const toggleLink = document.getElementById('authToggleLink');
+            
+            if (isLoginMode) {
+                modalTitle.textContent = 'Welcome Back';
+                toggleText.textContent = "Don't have an account?";
+                toggleLink.textContent = 'Sign up';
+            } else {
+                modalTitle.textContent = 'Create Account';
+                toggleText.textContent = 'Already have an account?';
+                toggleLink.textContent = 'Log in';
+            }
+        }
+
+        // Form submission
+        document.getElementById('authForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simulate authentication
+            currentUser = { email, plan: currentPlan || 'premium' };
+            localStorage.setItem('lawbuddy_user', JSON.stringify(currentUser));
+            
+            // Update UI
+            document.getElementById('authButton').textContent = 'Logout';
+            document.getElementById('dashboardLink').style.display = 'inline';
+            closeModal();
+            
+            if (currentPlan) {
+                showSection('dashboard');
+                updateAgentAccess();
+            }
+        });
+
+        // Plan selection
+        function selectPlan(plan) {
+            currentPlan = plan;
+            if (currentUser) {
+                currentUser.plan = plan;
+                localStorage.setItem('lawbuddy_user', JSON.stringify(currentUser));
+                showSection('dashboard');
+                updateAgentAccess();
+            } else {
+                toggleAuth();
+            }
+        }
+
+        // Update agent access based on plan
+        function updateAgentAccess() {
+            const agentCards = document.querySelectorAll('.agent-card');
+            
+            if (currentUser?.plan === 'basic') {
+                // Lock all agents except the first one for basic plan
+                agentCards.forEach((card, index) => {
+                    if (index > 0) {
+                        card.classList.add('locked');
+                        if (!card.querySelector('.lock-overlay')) {
+                            const lock = document.createElement('div');
+                            lock.className = 'lock-overlay';
+                            lock.innerHTML = '🔒';
+                            card.appendChild(lock);
+                        }
+                    }
+                });
+            } else {
+                // Unlock all agents for premium plan
+                agentCards.forEach(card => {
+                    card.classList.remove('locked');
+                    const lock = card.querySelector('.lock-overlay');
+                    if (lock) lock.remove();
+                });
+            }
+        }
+
+        // Chat functionality
+        function openChat(agentType) {
+            if (!currentUser) {
+                toggleAuth();
+                return;
+            }
+            
+            // Check if user has access to this agent
+            const agentIndex = ['real-estate', 'tax', 'finance'].indexOf(agentType);
+            if (currentUser.plan === 'basic' && agentIndex > 0) {
+                alert('Upgrade to Premium to access all agents');
+                return;
+            }
+            
+            currentAgent = agentType;
+            const chatInterface = document.getElementById('chatInterface');
+            const agentName = document.getElementById('agentName');
+            
+            // Set agent name
+            const agentNames = {
+                'real-estate': 'Real Estate Expert',
+                'tax': 'Tax Law Specialist',
+                'finance': 'Finance Advisor'
+            };
+            
+            agentName.textContent = agentNames[agentType];
+            chatInterface.classList.add('active');
+            
+            // Clear previous messages and add welcome message
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="message agent">
+                    <p>Hello! I'm your ${agentNames[agentType]}. How can I assist you today?</p>
+                </div>
+            `;
+        }
+
+        function closeChat() {
+            document.getElementById('chatInterface').classList.remove('active');
+            currentAgent = null;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user';
+            userMessage.innerHTML = `<p>${message}</p>`;
+            chatMessages.appendChild(userMessage);
+            
+            // Clear input
+            input.value = '';
+            
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message agent';
+            typingIndicator.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(typingIndicator);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate AI response
+            setTimeout(() => {
+                typingIndicator.remove();
+                
+                const agentMessage = document.createElement('div');
+                agentMessage.className = 'message agent';
+                agentMessage.innerHTML = `<p>${generateResponse(currentAgent, message)}</p>`;
+                chatMessages.appendChild(agentMessage);
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1500);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function generateResponse(agent, message) {
+            const responses = {
+                'real-estate': [
+                    "Based on current Canadian real estate law, I can help you understand the implications of this transaction.",
+                    "The property transfer regulations in your province require specific documentation. Let me explain the process.",
+                    "Recent changes to zoning bylaws may affect your client's property. Here's what you need to know.",
+                    "I'll analyze the purchase agreement and highlight any potential legal concerns."
+                ],
+                'tax': [
+                    "According to the latest CRA guidelines, this situation requires careful consideration of tax implications.",
+                    "The tax treatment of this transaction depends on several factors. Let me break it down for you.",
+                    "Recent amendments to the Income Tax Act may benefit your client. Here's how to proceed.",
+                    "I'll help you optimize the tax structure while ensuring full compliance with Canadian tax law."
+                ],
+                'finance': [
+                    "Given current market conditions, I recommend considering these investment strategies for your client.",
+                    "The financial analysis shows several opportunities for portfolio optimization.",
+                    "Recent regulatory changes in the financial sector may impact your client's investments.",
+                    "Let me provide a comprehensive risk assessment for this financial decision."
+                ]
+            };
+            
+            const agentResponses = responses[agent] || responses['real-estate'];
+            return agentResponses[Math.floor(Math.random() * agentResponses.length)];
+        }
+
+        // Check for existing user on load
+        window.addEventListener('load', () => {
+            const savedUser = localStorage.getItem('lawbuddy_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('authButton').textContent = 'Logout';
+                document.getElementById('dashboardLink').style.display = 'inline';
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('authButton').addEventListener('click', () => {
+            if (currentUser) {
+                currentUser = null;
+                currentPlan = null;
+                localStorage.removeItem('lawbuddy_user');
+                document.getElementById('authButton').textContent = 'Get Started';
+                document.getElementById('dashboardLink').style.display = 'none';
+                showSection('hero');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add parallax effect to floating orbs
+        document.addEventListener('mousemove', (e) => {
+            const orbs = document.querySelectorAll('.floating-orb');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            orbs.forEach((orb, index) => {
+                const speed = (index + 1) * 10;
+                orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+
+        // Annual pricing toggle
+        let isAnnual = false;
+        
+        function togglePricing() {
+            isAnnual = !isAnnual;
+            const prices = document.querySelectorAll('.price');
+            
+            if (isAnnual) {
+                prices[0].innerHTML = '$79<span>/month</span>';
+                prices[1].innerHTML = '$199<span>/month</span>';
+            } else {
+                prices[0].innerHTML = '$99<span>/month</span>';
+                prices[1].innerHTML = '$249<span>/month</span>';
+            }
+        }
